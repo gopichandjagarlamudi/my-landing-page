@@ -1,140 +1,159 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { siteConfig } from "@/lib/site";
 
 const navItems = [
-  { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
+  { label: "Who It's For", href: "#fit" },
   { label: "Process", href: "#process" },
   { label: "Contact", href: "#contact" },
 ];
 
 const services = [
   {
-    title: "Custom Business Systems",
+    title: "Custom internal systems",
     description:
-      "Custom internal software designed specifically for your operations.",
+      "Software built around your real workflow so your team spends less time patching together spreadsheets, inboxes, and disconnected tools.",
     items: [
-      "scheduling systems",
-      "booking systems",
-      "internal portals",
-      "workflow platforms",
+      "scheduling and booking systems",
+      "operations portals",
+      "workflow automation dashboards",
+      "internal approval and review tools",
     ],
   },
   {
-    title: "Internal Tools & Dashboards",
-    description: "Custom dashboards and operational tools.",
+    title: "Dashboards and admin tools",
+    description:
+      "Clear operational visibility for owners and managers who need reliable data, approvals, and reporting in one place.",
     items: [
-      "employee management tools",
+      "team and staff management tools",
       "analytics dashboards",
       "admin portals",
-      "reporting systems",
+      "reporting and exception tracking",
     ],
   },
   {
-    title: "AI Assistants & Knowledge Tools",
-    description: "Custom AI-ready tools designed around your internal knowledge.",
+    title: "AI assistants and knowledge tools",
+    description:
+      "Practical AI features that help your team search documents, organize information, and speed up routine decisions.",
     items: [
       "document search assistants",
-      "internal AI interfaces",
+      "internal AI workspaces",
       "knowledge organization systems",
-      "reporting insights",
+      "reporting insights and summaries",
     ],
   },
+];
+
+const fitItems = [
+  "Service businesses running too much of the day through calls, texts, sheets, and manual follow-up",
+  "Owners and operators who need a system tailored to how their team already works",
+  "Teams that want AI where it is useful, not bolted on as a gimmick",
 ];
 
 const processSteps = [
   {
     number: "01",
-    title: "Discovery Call",
+    title: "Strategy call",
     description:
-      "Understand your business workflow and identify the highest-impact system gaps.",
+      "We map your current workflow, bottlenecks, and highest-value opportunities first.",
   },
   {
     number: "02",
-    title: "System Design",
+    title: "Scope and system design",
     description:
-      "Design a custom solution tailored to your operations.",
+      "You get a practical plan for the simplest system that solves the right problem.",
   },
   {
     number: "03",
-    title: "Rapid Development",
+    title: "Build and refine",
     description:
-      "Build the system quickly using modern technologies and an efficient development process.",
+      "The system is built quickly, reviewed with you, and adjusted around real usage.",
   },
   {
     number: "04",
-    title: "Deployment & Support",
+    title: "Launch and support",
     description:
-      "Launch the system and provide ongoing improvements if needed.",
+      "Once it is live, P2P Labs can continue improving it as your operations evolve.",
   },
 ];
 
 const reasons = [
-  "tailored software built for your exact workflow",
-  "AI-accelerated development for faster delivery",
-  "practical solutions focused on productivity",
-  "direct communication with the developer",
-  "focus on operational efficiency and ROI",
+  "Direct access to the person designing and building the system",
+  "Custom delivery instead of forcing your business into a generic SaaS template",
+  "Clear scope, clear communication, and a real contact method",
+  "AI used where it creates leverage, not noise",
 ];
 
 const problems = [
-  "scheduling handled manually",
-  "repetitive administrative work",
-  "disconnected tools and spreadsheets",
-  "inefficient workflows",
-  "time lost on operational tasks",
+  "Scheduling handled manually across calls, texts, and spreadsheets",
+  "Repetitive admin work that slows down the team every week",
+  "Disconnected tools that create errors and duplicate effort",
+  "No single system for owners, staff, and managers to work from",
 ];
 
-const projectFeatures = [
-  "employee login portal",
-  "availability submission",
-  "automated schedule generation",
-  "centralized management dashboard",
+const outcomes = [
+  "Less manual admin",
+  "Faster internal response times",
+  "Clearer team accountability",
+  "More reliable day-to-day operations",
 ];
 
 const heroPreviewModules = [
-  ["System Type", "Scheduling platform concept"],
-  ["Primary Views", "Portal, dashboard, review queue"],
-  ["Core Inputs", "Availability forms and role assignments"],
-  ["Output", "Draft schedule layouts"],
+  ["Built for", "Service teams and operators"],
+  ["Typical projects", "Dashboards, portals, automations"],
+  ["Primary goal", "Reduce manual workflow friction"],
+  ["Next step", "Book a strategy call"],
 ];
 
 const heroPreviewStages = [
-  ["Interface planning", "mapped"],
-  ["Workflow rules", "structured"],
-  ["Admin controls", "outlined"],
+  ["Workflow mapping", "done first"],
+  ["System scope", "kept practical"],
+  ["Launch path", "clearly defined"],
 ];
 
-const workPreviewCards = [
-  ["Availability forms", "Portal screen"],
-  ["Shift drafts", "Planning view"],
-  ["Manager approvals", "Review flow"],
-  ["Notifications", "Message layer"],
+const trustPoints = [
+  ["Direct founder contact", "Email, phone, and WhatsApp are all available"],
+  ["Clear engagement path", "Free strategy call before any project scope is defined"],
+  ["Transparent starting point", "Projects start at $500+ depending on scope"],
+  ["Custom fit", "Built around your process instead of forcing a template"],
 ];
 
-const workPreviewBars = [
-  ["Availability collection", "76%"],
-  ["Shift logic", "58%"],
-  ["Manager review", "64%"],
+const faqItems = [
+  {
+    question: "What kind of businesses is P2P Labs best for?",
+    answer:
+      "P2P Labs is best for service businesses and operators that rely on manual coordination, internal admin work, or disconnected tools that slow the team down.",
+  },
+  {
+    question: "Do you only build AI products?",
+    answer:
+      "No. Many projects start with better workflow software, dashboards, or internal systems. AI is added when it creates a real operational advantage.",
+  },
+  {
+    question: "What should I do if I am not sure what system I need?",
+    answer:
+      "Book the strategy call. The first step is defining the problem, the bottlenecks, and the smallest useful system to build.",
+  },
 ];
 
 const contactLinks = [
   {
     label: "Email",
-    value: "jagarlamudigopichand99@gmail.com",
-    href: "mailto:jagarlamudigopichand99@gmail.com",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
   },
   {
     label: "Phone",
-    value: "(226) 787-8310",
-    href: "tel:+12267878310",
+    value: siteConfig.phoneDisplay,
+    href: `tel:${siteConfig.phoneHref}`,
   },
   {
     label: "WhatsApp",
     value: "+1 226 787 8310",
-    href: "https://wa.me/12267878310",
+    href: siteConfig.whatsapp,
   },
 ];
 
@@ -248,30 +267,61 @@ function ParticleField() {
 
 export default function LandingPage() {
   const reducedMotion = useReducedMotion();
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    email: siteConfig.email,
+    telephone: siteConfig.phoneHref,
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "sales",
+        email: siteConfig.email,
+        telephone: siteConfig.phoneHref,
+        availableLanguage: ["English"],
+      },
+    ],
+    founder: {
+      "@type": "Person",
+      name: siteConfig.founder,
+    },
+    sameAs: [siteConfig.whatsapp],
+  };
 
   return (
     <main
-      id="home"
-      className="relative min-h-screen overflow-x-clip bg-[var(--background)] text-[var(--foreground)]"
+      id="main-content"
+      className="relative min-h-dvh overflow-x-clip bg-[var(--background)] text-[var(--foreground)]"
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationJsonLd),
+        }}
+      />
       <ParticleField />
 
       <div className="relative z-10">
         <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-[rgba(10,12,24,0.72)] px-4 py-3 shadow-[0_20px_60px_rgba(5,8,20,0.35)] backdrop-blur-xl sm:px-6">
             <a
-              href="#home"
+              href="#main-content"
               className="text-sm font-semibold uppercase tracking-[0.28em] text-white/92"
             >
-              Gopi Chand
+              {siteConfig.name}
             </a>
 
-            <nav className="hidden items-center gap-6 md:flex">
+            <nav
+              aria-label="Primary"
+              className="hidden items-center gap-6 md:flex"
+            >
               {navItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="text-sm text-slate-300 transition duration-300 hover:text-white"
+                  className="min-h-11 text-sm text-slate-300 transition duration-300 hover:text-white"
                 >
                   {item.label}
                 </a>
@@ -280,9 +330,10 @@ export default function LandingPage() {
 
             <a
               href="#contact"
-              className="glow-button inline-flex items-center justify-center rounded-full border border-violet-300/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-white"
+              data-track="cta-header"
+              className="glow-button inline-flex min-h-11 items-center justify-center rounded-full border border-violet-300/30 bg-violet-400/12 px-4 py-2 text-sm font-medium text-white"
             >
-              Book a Call
+              Book a Free Strategy Call
             </a>
           </div>
         </header>
@@ -294,33 +345,52 @@ export default function LandingPage() {
               <div className="relative flex flex-col items-center text-center lg:items-start lg:text-left">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-violet-200/80">
                   <span className="h-2 w-2 rounded-full bg-violet-300 shadow-[0_0_20px_rgba(196,181,253,0.95)]" />
-                  AI Business Systems Developer
+                  Custom AI Systems for Service Businesses
                 </span>
                 <h1 className="mt-8 max-w-4xl text-balance text-5xl font-semibold tracking-[-0.065em] text-white sm:text-6xl lg:text-7xl">
-                  Custom AI Systems for Modern Businesses
+                  Replace manual workflows with software built for how your team actually works
                 </h1>
                 <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-300 sm:text-xl">
-                  I design and build custom software, internal tools, and
-                  AI-informed business systems that reduce manual work and help
-                  teams operate with more clarity and speed.
+                  {siteConfig.name} designs and builds custom internal tools,
+                  dashboards, and AI-enabled systems for service businesses that
+                  need fewer manual tasks, clearer operations, and faster team
+                  execution.
+                </p>
+                <p className="mt-4 max-w-2xl text-pretty text-base leading-8 text-slate-400 sm:text-lg">
+                  If your business still runs important work through inboxes,
+                  spreadsheets, and manual follow-up, P2P Labs helps turn that
+                  chaos into a practical operating system.
                 </p>
                 <div className="mt-10 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
                   <a
                     href="#contact"
-                    className="glow-button inline-flex items-center justify-center rounded-full border border-violet-300/35 bg-violet-400/18 px-6 py-3 text-base font-medium text-white"
+                    data-track="cta-hero-primary"
+                    className="glow-button inline-flex min-h-12 items-center justify-center rounded-full border border-violet-300/35 bg-violet-400/18 px-6 py-3 text-base font-medium text-white"
                   >
-                    Book a Free Consultation
+                    Book a Free Strategy Call
                   </a>
                   <a
-                    href="#services"
-                    className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
+                    href={`mailto:${siteConfig.email}`}
+                    data-track="cta-hero-secondary"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
                   >
-                    View Services
+                    Email P2P Labs
                   </a>
                 </div>
-                <p className="mt-10 text-sm uppercase tracking-[0.28em] text-slate-400">
-                  Custom systems for real business workflows.
-                </p>
+                <div className="mt-10 grid w-full gap-3 text-left sm:grid-cols-3">
+                  {[
+                    "Custom systems, not templates",
+                    "Free strategy call before scope",
+                    "Projects starting from $500+",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-white/10 bg-black/18 px-4 py-3 text-sm text-slate-200"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
             </Reveal>
 
@@ -330,14 +400,14 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-slate-300">
-                        Concept Preview
+                        Workflow Snapshot
                       </p>
                       <p className="mt-1 text-2xl font-semibold text-white">
-                        Scheduling Engine
+                        P2P Labs Delivery Focus
                       </p>
                     </div>
                     <div className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-xs font-medium text-violet-100">
-                      Internal system concept
+                      Built for operators
                     </div>
                   </div>
                   <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -359,8 +429,8 @@ export default function LandingPage() {
                   </div>
                   <div className="mt-6 rounded-[1.35rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-4">
                     <div className="flex items-center justify-between text-sm text-slate-300">
-                      <span>Workflow structure</span>
-                      <span className="text-violet-200">planning view</span>
+                      <span>Engagement approach</span>
+                      <span className="text-violet-200">clarity first</span>
                     </div>
                     <div className="mt-4 space-y-3">
                       {heroPreviewStages.map(([label, value]) => (
@@ -380,12 +450,55 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="section-shell px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-4">
+            {outcomes.map((item) => (
+              <Reveal
+                key={item}
+                className="rounded-[1.6rem] border border-white/10 bg-white/[0.045] px-5 py-5 text-center text-sm font-medium text-slate-100 shadow-[0_14px_60px_rgba(4,8,20,0.28)]"
+              >
+                {item}
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        <section className="section-shell px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+            <Reveal className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 backdrop-blur-xl">
+              <p className="text-sm uppercase tracking-[0.28em] text-violet-200/80">
+                The Problem
+              </p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">
+                When operations stay manual, growth usually gets messy
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-slate-300">
+                The biggest cost is not just wasted time. It is the constant
+                friction, missed handoffs, and lack of visibility that make the
+                business harder to run.
+              </p>
+            </Reveal>
+            <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,18,34,0.9),rgba(9,12,22,0.88))] p-8 shadow-[0_20px_60px_rgba(8,12,28,0.36)] backdrop-blur-xl">
+              <div className="grid gap-4 sm:grid-cols-2">
+                {problems.map((problem) => (
+                  <div
+                    key={problem}
+                    className="rounded-[1.35rem] border border-white/8 bg-black/16 px-5 py-4 text-sm text-slate-200"
+                  >
+                    {problem}
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
         <section id="services" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
           <Reveal className="mx-auto max-w-7xl">
             <SectionIntro
               eyebrow="Services"
-              title="AI Solutions That Improve Business Operations"
-              description="Custom-built systems designed to eliminate manual work and streamline workflows."
+              title="Services built around operational bottlenecks, not generic feature lists"
+              description="P2P Labs helps service businesses replace manual coordination with systems that are easier to run, measure, and improve."
             />
             <div className="mx-auto mt-14 grid max-w-6xl gap-6 md:grid-cols-2 xl:grid-cols-3">
               {services.map((service, index) => (
@@ -429,31 +542,31 @@ export default function LandingPage() {
           </Reveal>
         </section>
 
-        <section id="work" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+        <section id="fit" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <Reveal>
               <SectionIntro
-                eyebrow="Featured Work"
-                title="Example System Built for a Business"
-                description="A premium concept example showing how manual operations can be translated into a streamlined internal platform."
+                eyebrow="Who It's For"
+                title="A strong fit when your business needs practical systems, not extra software clutter"
+                description="The best projects start with a clear operational problem and a team that wants a better way to run it."
               />
             </Reveal>
             <div className="mt-14 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <Reveal className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 shadow-[0_24px_90px_rgba(8,12,28,0.42)] backdrop-blur-xl">
                 <p className="text-sm uppercase tracking-[0.28em] text-violet-200/80">
-                  Scheduling Platform
+                  Ideal Engagements
                 </p>
                 <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">
-                  Automated Employee Scheduling System
+                  P2P Labs is built for business owners and operators who need a system that fits
                 </h3>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                  A custom web application concept designed to replace manual
-                  scheduling processes. Employees submit availability through a
-                  secure portal and managers review structured schedule drafts
-                  generated from the collected data.
+                  You do not need to arrive with a full technical specification.
+                  You need a real business problem, a working process that can be
+                  improved, and a willingness to replace manual friction with a
+                  cleaner operating workflow.
                 </p>
                 <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {projectFeatures.map((feature) => (
+                  {fitItems.map((feature) => (
                     <div
                       key={feature}
                       className="rounded-2xl border border-white/8 bg-black/18 px-4 py-4 text-sm text-slate-100"
@@ -463,8 +576,8 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <p className="mt-8 rounded-2xl border border-violet-300/12 bg-violet-400/8 px-5 py-4 text-sm text-violet-100/90">
-                  Developed as a custom internal system concept for reducing
-                  manual scheduling complexity.
+                  Best suited for businesses that want a tailored solution and
+                  direct collaboration instead of a generic off-the-shelf setup.
                 </p>
               </Reveal>
 
@@ -472,13 +585,13 @@ export default function LandingPage() {
                 <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.045] p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-400">Dashboard Preview</p>
+                      <p className="text-sm text-slate-400">Trust Snapshot</p>
                       <p className="mt-1 text-xl font-semibold text-white">
-                        Scheduling Workspace
+                        Why prospects can move forward confidently
                       </p>
                     </div>
                     <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-slate-200">
-                      Concept interface
+                      Real business signals
                     </span>
                   </div>
                   <div className="mt-6 grid gap-4">
@@ -486,21 +599,21 @@ export default function LandingPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm text-slate-400">
-                            Planning status
+                            Public contact paths
                           </p>
                           <p className="mt-2 text-3xl font-semibold text-white">
-                            Module map
+                            3 ways to reach P2P Labs
                           </p>
                         </div>
                         <div className="h-16 w-16 rounded-full border border-violet-300/20 bg-[conic-gradient(from_210deg,rgba(168,85,247,0.92),rgba(139,92,246,0.22),rgba(168,85,247,0.92))] p-2">
                           <div className="flex h-full w-full items-center justify-center rounded-full bg-[#090b14] text-sm text-violet-100">
-                            Draft
+                            Live
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {workPreviewCards.map(([label, value]) => (
+                      {trustPoints.map(([label, value]) => (
                         <div
                           key={label}
                           className="rounded-[1.3rem] border border-white/8 bg-white/[0.04] p-4"
@@ -514,29 +627,20 @@ export default function LandingPage() {
                     </div>
                     <div className="rounded-[1.4rem] border border-white/8 bg-black/20 p-4">
                       <div className="flex items-center justify-between text-sm text-slate-300">
-                        <span>System architecture</span>
-                        <span className="text-violet-200">structured</span>
+                        <span>Buyer confidence path</span>
+                        <span className="text-violet-200">low friction</span>
                       </div>
                       <div className="mt-4 space-y-3">
-                        {workPreviewBars.map(([label, value]) => (
-                          <div key={label}>
-                            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.18em] text-slate-400">
-                              <span>{label}</span>
-                              <span>{value}</span>
-                            </div>
-                            <div className="h-2 rounded-full bg-white/8">
-                              <div
-                                className="h-2 rounded-full bg-[linear-gradient(90deg,rgba(168,85,247,0.9),rgba(129,140,248,0.95))]"
-                                style={{
-                                  width:
-                                    label === "Availability collection"
-                                      ? "72%"
-                                      : label === "Shift logic"
-                                        ? "48%"
-                                        : "88%",
-                                }}
-                              />
-                            </div>
+                        {[
+                          "Understand the problem",
+                          "See the process",
+                          "Pick a direct contact method",
+                        ].map((item) => (
+                          <div
+                            key={item}
+                            className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-sm text-slate-200"
+                          >
+                            {item}
                           </div>
                         ))}
                       </div>
@@ -548,43 +652,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="section-shell px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-            <Reveal className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 backdrop-blur-xl">
-              <p className="text-sm uppercase tracking-[0.28em] text-violet-200/80">
-                Common Pain Points
-              </p>
-              <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">
-                Many Businesses Still Run on Manual Processes
-              </h3>
-            </Reveal>
-            <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,18,34,0.9),rgba(9,12,22,0.88))] p-8 shadow-[0_20px_60px_rgba(8,12,28,0.36)] backdrop-blur-xl">
-              <div className="grid gap-4 sm:grid-cols-2">
-                {problems.map((problem) => (
-                  <div
-                    key={problem}
-                    className="rounded-[1.35rem] border border-white/8 bg-black/16 px-5 py-4 text-sm text-slate-200"
-                  >
-                    {problem}
-                  </div>
-                ))}
-              </div>
-              <p className="mt-8 text-lg leading-8 text-slate-300">
-                Custom software and thoughtfully designed digital systems can
-                transform these processes into cleaner, more efficient
-                operations.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
         <section id="process" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <Reveal>
               <SectionIntro
                 eyebrow="Process"
-                title="How I Work"
-                description="A clear delivery process focused on speed, precision, and practical business outcomes."
+                title="A simple process that keeps scope clear and momentum high"
+                description="The goal is not to overcomplicate the engagement. It is to define the right system and build it safely."
               />
             </Reveal>
             <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -622,9 +696,9 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(16,19,35,0.92),rgba(8,10,18,0.9))] p-8 shadow-[0_20px_60px_rgba(8,12,28,0.35)] backdrop-blur-xl">
               <SectionIntro
-                eyebrow="Why Work With Me"
-                title="Why Businesses Choose Custom Systems"
-                description="Built around operational realities, not generic templates or off-the-shelf compromises."
+                eyebrow="Why P2P Labs"
+                title="Why businesses choose a custom system instead of another patchwork tool"
+                description="P2P Labs stays focused on the practical outcome: a system your team can actually use and keep using."
               />
             </Reveal>
             <Reveal className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 backdrop-blur-xl">
@@ -650,20 +724,21 @@ export default function LandingPage() {
                 Pricing
               </p>
               <h2 className="mt-5 text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl">
-                Project Pricing
+                Starting project range
               </h2>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                Every project is different depending on complexity and scope.
+                Every engagement is scoped around the workflow, users, and level
+                of automation required, so the first step is a strategy call.
               </p>
               <p className="mt-8 text-5xl font-semibold tracking-[-0.06em] text-white sm:text-6xl">
                 $500+
               </p>
               <p className="mt-3 text-sm uppercase tracking-[0.28em] text-slate-400">
-                Custom systems start from $500+
+                Custom systems and internal tools start from $500+
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-200">
                 {[
-                  "free consultation",
+                  "free strategy call",
                   "custom quote",
                   "optional maintenance support",
                 ].map((item) => (
@@ -679,6 +754,33 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="section-shell px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <Reveal>
+              <SectionIntro
+                eyebrow="FAQ"
+                title="Questions a new visitor is likely to ask"
+                description="These answers reduce ambiguity before someone reaches out."
+              />
+            </Reveal>
+            <div className="mt-12 space-y-4">
+              {faqItems.map((item) => (
+                <Reveal
+                  key={item.question}
+                  className="rounded-[1.8rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_16px_60px_rgba(6,9,20,0.28)] backdrop-blur-xl"
+                >
+                  <h3 className="text-xl font-semibold tracking-[-0.03em] text-white">
+                    {item.question}
+                  </h3>
+                  <p className="mt-3 text-base leading-8 text-slate-300">
+                    {item.answer}
+                  </p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="contact" className="section-shell scroll-mt-28 px-4 pb-28 pt-16 sm:px-6 md:pb-32 md:pt-24 lg:px-8">
           <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,20,38,0.92),rgba(7,9,17,0.95))] p-8 shadow-[0_30px_100px_rgba(5,8,20,0.4)] backdrop-blur-xl sm:p-10">
             <div className="grid gap-10 lg:grid-cols-[1fr_0.95fr] lg:items-start">
@@ -687,27 +789,33 @@ export default function LandingPage() {
                   Contact
                 </p>
                 <h2 className="mt-5 max-w-2xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl">
-                  Let&apos;s Improve Your Business Workflows
+                  Tell P2P Labs what is slowing your team down
                 </h2>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                  If your business relies on manual processes, custom systems
-                  and modern internal tools can significantly improve
-                  efficiency.
+                  If the workflow is painful, repetitive, or hard to manage, the
+                  next step is a short conversation to define the right fix.
                 </p>
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                   <a
-                    href="tel:+12267878310"
-                    className="glow-button inline-flex items-center justify-center rounded-full border border-violet-300/35 bg-violet-400/18 px-6 py-3 text-base font-medium text-white"
+                    href={`tel:${siteConfig.phoneHref}`}
+                    data-track="cta-contact-primary"
+                    className="glow-button inline-flex min-h-12 items-center justify-center rounded-full border border-violet-300/35 bg-violet-400/18 px-6 py-3 text-base font-medium text-white"
                   >
-                    Book a Call
+                    Book a Free Strategy Call
                   </a>
                   <a
-                    href="mailto:jagarlamudigopichand99@gmail.com"
-                    className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
+                    href={`mailto:${siteConfig.email}`}
+                    data-track="cta-contact-secondary"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
                   >
                     Send a Message
                   </a>
                 </div>
+                <p className="mt-5 text-sm leading-7 text-slate-400">
+                  Analytics note: CTA links use `data-track` attributes so a
+                  future analytics tool can capture clicks without changing the
+                  markup structure.
+                </p>
               </Reveal>
 
               <Reveal className="rounded-[1.8rem] border border-white/10 bg-white/[0.045] p-6">
@@ -733,7 +841,7 @@ export default function LandingPage() {
                         </p>
                       </div>
                       <span className="text-sm text-violet-200 transition duration-300 group-hover:text-white">
-                        Open
+                        Contact
                       </span>
                     </a>
                   ))}
@@ -747,41 +855,47 @@ export default function LandingPage() {
           <div className="mx-auto flex max-w-7xl flex-col gap-5 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="font-semibold uppercase tracking-[0.24em] text-white/90">
-                Gopi Chand
+                {siteConfig.name}
               </p>
-              <p className="mt-2">AI Business Systems Developer</p>
+              <p className="mt-2">
+                Custom AI systems and internal tools for service businesses
+              </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <a
-                href="mailto:jagarlamudigopichand99@gmail.com"
+                href={`mailto:${siteConfig.email}`}
                 className="transition duration-300 hover:text-white"
               >
                 Email
               </a>
               <a
-                href="tel:+12267878310"
+                href={`tel:${siteConfig.phoneHref}`}
                 className="transition duration-300 hover:text-white"
               >
                 Phone
               </a>
               <a
-                href="https://wa.me/12267878310"
+                href={siteConfig.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition duration-300 hover:text-white"
               >
                 WhatsApp
               </a>
+              <Link href="/privacy" className="transition duration-300 hover:text-white">
+                Privacy
+              </Link>
             </div>
           </div>
         </footer>
 
         <div className="fixed inset-x-4 bottom-4 z-50 md:hidden">
           <a
-            href="tel:+12267878310"
-            className="glow-button flex items-center justify-center rounded-full border border-violet-300/35 bg-[rgba(129,90,255,0.18)] px-6 py-4 text-base font-medium text-white shadow-[0_20px_60px_rgba(91,33,182,0.32)] backdrop-blur-xl"
+            href={`tel:${siteConfig.phoneHref}`}
+            data-track="cta-mobile-sticky"
+            className="glow-button flex min-h-12 items-center justify-center rounded-full border border-violet-300/35 bg-[rgba(129,90,255,0.18)] px-6 py-4 text-base font-medium text-white shadow-[0_20px_60px_rgba(91,33,182,0.32)] backdrop-blur-xl"
           >
-            Book a Call
+            Book a Free Strategy Call
           </a>
         </div>
       </div>

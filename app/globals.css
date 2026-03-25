@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at top, rgba(91, 33, 182, 0.22), transparent 26%),
     radial-gradient(circle at 20% 10%, rgba(76, 29, 149, 0.22), transparent 18%),
@@ -38,6 +38,7 @@ body::selection {
 a,
 button {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 @layer base {
@@ -53,9 +54,33 @@ button {
   h6 {
     font-family: var(--font-space-grotesk), sans-serif;
   }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid rgba(196, 181, 253, 0.95);
+    outline-offset: 3px;
+  }
 }
 
 @layer utilities {
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 200;
+    transform: translateY(-200%);
+    border-radius: 9999px;
+    border: 1px solid rgba(196, 181, 253, 0.5);
+    background: rgba(10, 12, 24, 0.96);
+    color: #fff;
+    padding: 0.75rem 1rem;
+    transition: transform 180ms ease;
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
   .section-shell {
     position: relative;
   }
@@ -79,6 +104,7 @@ button {
   .glow-button {
     position: relative;
     overflow: hidden;
+    min-height: 44px;
     box-shadow:
       0 0 0 1px rgba(196, 181, 253, 0.08),
       0 18px 45px rgba(91, 33, 182, 0.26);
