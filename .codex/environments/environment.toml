@@ -12,3 +12,8 @@ command = '''
 npm run lint
 npm run build
 '''
+
+[[actions]]
+name = "run"
+icon = "tool"
+command = "npm run dev"

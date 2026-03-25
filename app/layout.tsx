@@ -21,9 +21,28 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.founder }],
+  creator: siteConfig.founder,
+  publisher: siteConfig.legalName,
+  referrer: "origin-when-cross-origin",
+  category: "technology",
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: false,
+  },
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
+  },
+  manifest: "/manifest.webmanifest",
   robots: {
     index: true,
     follow: true,
@@ -39,6 +58,7 @@ export const metadata: Metadata = {
     type: "website",
     url: siteConfig.url,
     siteName: siteConfig.name,
+    locale: siteConfig.locale,
     title: siteConfig.title,
     description: siteConfig.ogDescription,
     images: [
@@ -56,13 +76,20 @@ export const metadata: Metadata = {
     description: siteConfig.ogDescription,
     images: ["/opengraph-image"],
   },
-  category: "technology",
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? {
+          "msvalidate.01": process.env.BING_SITE_VERIFICATION,
+        }
+      : undefined,
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#050816",
+  themeColor: siteConfig.themeColor,
 };
 
 export default function RootLayout({

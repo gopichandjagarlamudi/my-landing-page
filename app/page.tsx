@@ -3,7 +3,7 @@ import LandingPage from "@/components/landing-page";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Custom AI Systems and Internal Tools for Service Businesses",
+  title: "P2PLabs | Problem to Product Labs",
   description: siteConfig.description,
   alternates: {
     canonical: "/",

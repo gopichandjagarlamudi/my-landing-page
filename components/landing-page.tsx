@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { siteConfig } from "@/lib/site";
@@ -76,7 +77,7 @@ const processSteps = [
     number: "04",
     title: "Launch and support",
     description:
-      "Once it is live, P2P Labs can continue improving it as your operations evolve.",
+      "Once it is live, P2PLabs can continue improving it as your operations evolve.",
   },
 ];
 
@@ -117,15 +118,20 @@ const heroPreviewStages = [
 const trustPoints = [
   ["Direct founder contact", "Email, phone, and WhatsApp are all available"],
   ["Clear engagement path", "Free strategy call before any project scope is defined"],
-  ["Transparent starting point", "Projects start at $500+ depending on scope"],
+  ["Problem-first approach", "Every engagement starts by defining the bottleneck before the build"],
   ["Custom fit", "Built around your process instead of forcing a template"],
 ];
 
 const faqItems = [
   {
-    question: "What kind of businesses is P2P Labs best for?",
+    question: "What kind of businesses is P2PLabs best for?",
     answer:
-      "P2P Labs is best for service businesses and operators that rely on manual coordination, internal admin work, or disconnected tools that slow the team down.",
+      "P2PLabs is best for service businesses and operators that rely on manual coordination, internal admin work, or disconnected tools that slow the team down.",
+  },
+  {
+    question: "What does P2PLabs mean?",
+    answer:
+      "P2PLabs stands for Problem to Product Labs. The focus is turning real operational problems into practical products, systems, and workflows your team can use every day.",
   },
   {
     question: "Do you only build AI products?",
@@ -156,6 +162,48 @@ const contactLinks = [
     href: siteConfig.whatsapp,
   },
 ];
+
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+
+type ContactFormValues = {
+  name: string;
+  email: string;
+  company: string;
+  message: string;
+};
+
+type ContactFormErrors = Partial<Record<keyof ContactFormValues, string>>;
+
+const initialFormValues: ContactFormValues = {
+  name: "",
+  email: "",
+  company: "",
+  message: "",
+};
+
+function validateContactForm(values: ContactFormValues) {
+  const errors: ContactFormErrors = {};
+
+  if (!values.name.trim()) {
+    errors.name = "Please enter your name.";
+  }
+
+  if (!values.email.trim()) {
+    errors.email = "Please enter your email address.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    errors.email = "Please enter a valid email address.";
+  }
+
+  if (!values.company.trim()) {
+    errors.company = "Please enter your company or business name.";
+  }
+
+  if (!values.message.trim()) {
+    errors.message = "Please enter a short message.";
+  }
+
+  return errors;
+}
 
 function SectionIntro({
   eyebrow,
@@ -267,10 +315,21 @@ function ParticleField() {
 
 export default function LandingPage() {
   const reducedMotion = useReducedMotion();
+  const web3FormsAccessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+  const [formValues, setFormValues] =
+    useState<ContactFormValues>(initialFormValues);
+  const [formErrors, setFormErrors] = useState<ContactFormErrors>({});
+  const [submitState, setSubmitState] = useState<{
+    status: "idle" | "success" | "error";
+    message: string;
+  }>({ status: "idle", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteConfig.name,
+    legalName: siteConfig.legalName,
     url: siteConfig.url,
     email: siteConfig.email,
     telephone: siteConfig.phoneHref,
@@ -288,6 +347,99 @@ export default function LandingPage() {
       name: siteConfig.founder,
     },
     sameAs: [siteConfig.whatsapp],
+  };
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target;
+
+    setFormValues((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    setFormErrors((current) => {
+      if (!current[name as keyof ContactFormValues]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+      delete nextErrors[name as keyof ContactFormValues];
+      return nextErrors;
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const errors = validateContactForm(formValues);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setSubmitState({
+        status: "error",
+        message: "Please fix the highlighted fields and try again.",
+      });
+      return;
+    }
+
+    if (!web3FormsAccessKey) {
+      setSubmitState({
+        status: "error",
+        message:
+          "Form configuration is missing. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY and redeploy.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitState({ status: "idle", message: "" });
+
+    try {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: web3FormsAccessKey,
+          subject: "New P2PLabs contact form submission",
+          from_name: formValues.name,
+          name: formValues.name,
+          email: formValues.email,
+          company: formValues.company,
+          message: formValues.message,
+          botcheck: "",
+        }),
+      });
+
+      const result = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+      };
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Unable to send your message right now.");
+      }
+
+      setFormValues(initialFormValues);
+      setFormErrors({});
+      setSubmitState({
+        status: "success",
+        message: "Thanks. Your message was sent successfully.",
+      });
+    } catch (error) {
+      setSubmitState({
+        status: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong while sending your message.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -308,9 +460,12 @@ export default function LandingPage() {
           <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-[rgba(10,12,24,0.72)] px-4 py-3 shadow-[0_20px_60px_rgba(5,8,20,0.35)] backdrop-blur-xl sm:px-6">
             <a
               href="#main-content"
-              className="text-sm font-semibold uppercase tracking-[0.28em] text-white/92"
+              className="text-sm font-semibold uppercase tracking-[0.18em] text-white/92"
             >
               {siteConfig.name}
+              <span className="ml-2 hidden text-slate-400 md:inline">
+                Problem to Product Labs
+              </span>
             </a>
 
             <nav
@@ -345,20 +500,21 @@ export default function LandingPage() {
               <div className="relative flex flex-col items-center text-center lg:items-start lg:text-left">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-violet-200/80">
                   <span className="h-2 w-2 rounded-full bg-violet-300 shadow-[0_0_20px_rgba(196,181,253,0.95)]" />
-                  Custom AI Systems for Service Businesses
+                  P2PLabs | Problem to Product Labs
                 </span>
                 <h1 className="mt-8 max-w-4xl text-balance text-5xl font-semibold tracking-[-0.065em] text-white sm:text-6xl lg:text-7xl">
-                  Replace manual workflows with software built for how your team actually works
+                  Turning problems into products with software built for how your
+                  team actually works
                 </h1>
                 <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-300 sm:text-xl">
-                  {siteConfig.name} designs and builds custom internal tools,
-                  dashboards, and AI-enabled systems for service businesses that
-                  need fewer manual tasks, clearer operations, and faster team
-                  execution.
+                  P2PLabs, short for Problem to Product Labs, designs and builds
+                  custom internal tools, dashboards, and AI-enabled systems for
+                  service businesses that need fewer manual tasks, clearer
+                  operations, and faster team execution.
                 </p>
                 <p className="mt-4 max-w-2xl text-pretty text-base leading-8 text-slate-400 sm:text-lg">
                   If your business still runs important work through inboxes,
-                  spreadsheets, and manual follow-up, P2P Labs helps turn that
+                  spreadsheets, and manual follow-up, P2PLabs helps turn that
                   chaos into a practical operating system.
                 </p>
                 <div className="mt-10 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
@@ -374,14 +530,14 @@ export default function LandingPage() {
                     data-track="cta-hero-secondary"
                     className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
                   >
-                    Email P2P Labs
+                    Email P2PLabs
                   </a>
                 </div>
                 <div className="mt-10 grid w-full gap-3 text-left sm:grid-cols-3">
                   {[
                     "Custom systems, not templates",
                     "Free strategy call before scope",
-                    "Projects starting from $500+",
+                    "Problem-first product design",
                   ].map((item) => (
                     <div
                       key={item}
@@ -403,7 +559,7 @@ export default function LandingPage() {
                         Workflow Snapshot
                       </p>
                       <p className="mt-1 text-2xl font-semibold text-white">
-                        P2P Labs Delivery Focus
+                        P2PLabs Delivery Focus
                       </p>
                     </div>
                     <div className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-xs font-medium text-violet-100">
@@ -493,12 +649,15 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="services" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+        <section
+          id="services"
+          className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        >
           <Reveal className="mx-auto max-w-7xl">
             <SectionIntro
               eyebrow="Services"
               title="Services built around operational bottlenecks, not generic feature lists"
-              description="P2P Labs helps service businesses replace manual coordination with systems that are easier to run, measure, and improve."
+              description="P2PLabs helps service businesses replace manual coordination with systems that are easier to run, measure, and improve."
             />
             <div className="mx-auto mt-14 grid max-w-6xl gap-6 md:grid-cols-2 xl:grid-cols-3">
               {services.map((service, index) => (
@@ -542,7 +701,10 @@ export default function LandingPage() {
           </Reveal>
         </section>
 
-        <section id="fit" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+        <section
+          id="fit"
+          className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        >
           <div className="mx-auto max-w-7xl">
             <Reveal>
               <SectionIntro
@@ -557,7 +719,8 @@ export default function LandingPage() {
                   Ideal Engagements
                 </p>
                 <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">
-                  P2P Labs is built for business owners and operators who need a system that fits
+                  P2PLabs is built for business owners and operators who need a
+                  system that fits
                 </h3>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
                   You do not need to arrive with a full technical specification.
@@ -602,7 +765,7 @@ export default function LandingPage() {
                             Public contact paths
                           </p>
                           <p className="mt-2 text-3xl font-semibold text-white">
-                            3 ways to reach P2P Labs
+                            3 ways to reach P2PLabs
                           </p>
                         </div>
                         <div className="h-16 w-16 rounded-full border border-violet-300/20 bg-[conic-gradient(from_210deg,rgba(168,85,247,0.92),rgba(139,92,246,0.22),rgba(168,85,247,0.92))] p-2">
@@ -652,7 +815,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="process" className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+        <section
+          id="process"
+          className="section-shell scroll-mt-28 px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        >
           <div className="mx-auto max-w-7xl">
             <Reveal>
               <SectionIntro
@@ -696,9 +862,9 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(16,19,35,0.92),rgba(8,10,18,0.9))] p-8 shadow-[0_20px_60px_rgba(8,12,28,0.35)] backdrop-blur-xl">
               <SectionIntro
-                eyebrow="Why P2P Labs"
+                eyebrow="Why P2PLabs"
                 title="Why businesses choose a custom system instead of another patchwork tool"
-                description="P2P Labs stays focused on the practical outcome: a system your team can actually use and keep using."
+                description="P2PLabs stays focused on the practical outcome: a system your team can actually use and keep using."
               />
             </Reveal>
             <Reveal className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 backdrop-blur-xl">
@@ -711,43 +877,6 @@ export default function LandingPage() {
                     <span className="mt-1 h-2.5 w-2.5 rounded-full bg-violet-300 shadow-[0_0_20px_rgba(196,181,253,1)]" />
                     <p className="text-base leading-7 text-slate-200">{reason}</p>
                   </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="section-shell px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <div className="mx-auto max-w-4xl">
-            <Reveal className="rounded-[2rem] border border-violet-300/14 bg-[linear-gradient(180deg,rgba(26,14,44,0.76),rgba(11,13,24,0.94))] p-8 text-center shadow-[0_30px_100px_rgba(76,29,149,0.2)] backdrop-blur-xl sm:p-10">
-              <p className="text-sm uppercase tracking-[0.3em] text-violet-200/80">
-                Pricing
-              </p>
-              <h2 className="mt-5 text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl">
-                Starting project range
-              </h2>
-              <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                Every engagement is scoped around the workflow, users, and level
-                of automation required, so the first step is a strategy call.
-              </p>
-              <p className="mt-8 text-5xl font-semibold tracking-[-0.06em] text-white sm:text-6xl">
-                $500+
-              </p>
-              <p className="mt-3 text-sm uppercase tracking-[0.28em] text-slate-400">
-                Custom systems and internal tools start from $500+
-              </p>
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-200">
-                {[
-                  "free strategy call",
-                  "custom quote",
-                  "optional maintenance support",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/6 px-4 py-2"
-                  >
-                    {item}
-                  </span>
                 ))}
               </div>
             </Reveal>
@@ -781,7 +910,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="contact" className="section-shell scroll-mt-28 px-4 pb-28 pt-16 sm:px-6 md:pb-32 md:pt-24 lg:px-8">
+        <section
+          id="contact"
+          className="section-shell scroll-mt-28 px-4 pb-28 pt-16 sm:px-6 md:pb-32 md:pt-24 lg:px-8"
+        >
           <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,20,38,0.92),rgba(7,9,17,0.95))] p-8 shadow-[0_30px_100px_rgba(5,8,20,0.4)] backdrop-blur-xl sm:p-10">
             <div className="grid gap-10 lg:grid-cols-[1fr_0.95fr] lg:items-start">
               <Reveal>
@@ -789,11 +921,12 @@ export default function LandingPage() {
                   Contact
                 </p>
                 <h2 className="mt-5 max-w-2xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl">
-                  Tell P2P Labs what is slowing your team down
+                  Tell P2PLabs what is slowing your team down
                 </h2>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
                   If the workflow is painful, repetitive, or hard to manage, the
-                  next step is a short conversation to define the right fix.
+                  next step is a short conversation with Problem to Product Labs
+                  to define the right fix.
                 </p>
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                   <a
@@ -804,22 +937,164 @@ export default function LandingPage() {
                     Book a Free Strategy Call
                   </a>
                   <a
-                    href={`mailto:${siteConfig.email}`}
-                    data-track="cta-contact-secondary"
+                    href={siteConfig.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-track="cta-contact-whatsapp"
                     className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/6 px-6 py-3 text-base font-medium text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
                   >
-                    Send a Message
+                    Message on WhatsApp
                   </a>
                 </div>
                 <p className="mt-5 text-sm leading-7 text-slate-400">
-                  Analytics note: CTA links use `data-track` attributes so a
-                  future analytics tool can capture clicks without changing the
-                  markup structure.
+                  Use the form to send project details directly, or choose email,
+                  phone, or WhatsApp below if you prefer a faster path.
                 </p>
               </Reveal>
 
               <Reveal className="rounded-[1.8rem] border border-white/10 bg-white/[0.045] p-6">
-                <div className="space-y-4">
+                <form className="space-y-4" noValidate onSubmit={handleSubmit}>
+                  <input
+                    type="checkbox"
+                    name="botcheck"
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="mb-2 block text-sm uppercase tracking-[0.18em] text-slate-400"
+                      >
+                        Name
+                      </label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        value={formValues.name}
+                        onChange={handleInputChange}
+                        aria-invalid={Boolean(formErrors.name)}
+                        aria-describedby={formErrors.name ? "name-error" : undefined}
+                        className="min-h-12 w-full rounded-[1.1rem] border border-white/10 bg-black/18 px-4 py-3 text-base text-white outline-none transition duration-300 placeholder:text-slate-500 focus:border-violet-300/35 focus:bg-white/8"
+                        placeholder="Your name"
+                      />
+                      {formErrors.name ? (
+                        <p id="name-error" className="mt-2 text-sm text-rose-300">
+                          {formErrors.name}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="mb-2 block text-sm uppercase tracking-[0.18em] text-slate-400"
+                      >
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        value={formValues.email}
+                        onChange={handleInputChange}
+                        aria-invalid={Boolean(formErrors.email)}
+                        aria-describedby={formErrors.email ? "email-error" : undefined}
+                        className="min-h-12 w-full rounded-[1.1rem] border border-white/10 bg-black/18 px-4 py-3 text-base text-white outline-none transition duration-300 placeholder:text-slate-500 focus:border-violet-300/35 focus:bg-white/8"
+                        placeholder="you@company.com"
+                      />
+                      {formErrors.email ? (
+                        <p id="email-error" className="mt-2 text-sm text-rose-300">
+                          {formErrors.email}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="company"
+                      className="mb-2 block text-sm uppercase tracking-[0.18em] text-slate-400"
+                    >
+                      Company or Business Name
+                    </label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      autoComplete="organization"
+                      value={formValues.company}
+                      onChange={handleInputChange}
+                      aria-invalid={Boolean(formErrors.company)}
+                      aria-describedby={formErrors.company ? "company-error" : undefined}
+                      className="min-h-12 w-full rounded-[1.1rem] border border-white/10 bg-black/18 px-4 py-3 text-base text-white outline-none transition duration-300 placeholder:text-slate-500 focus:border-violet-300/35 focus:bg-white/8"
+                      placeholder="Your business name"
+                    />
+                    {formErrors.company ? (
+                      <p
+                        id="company-error"
+                        className="mt-2 text-sm text-rose-300"
+                      >
+                        {formErrors.company}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="mb-2 block text-sm uppercase tracking-[0.18em] text-slate-400"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      value={formValues.message}
+                      onChange={handleInputChange}
+                      aria-invalid={Boolean(formErrors.message)}
+                      aria-describedby={formErrors.message ? "message-error" : undefined}
+                      className="w-full rounded-[1.1rem] border border-white/10 bg-black/18 px-4 py-3 text-base text-white outline-none transition duration-300 placeholder:text-slate-500 focus:border-violet-300/35 focus:bg-white/8"
+                      placeholder="Tell us about the workflow, bottleneck, or system you want to improve."
+                    />
+                    {formErrors.message ? (
+                      <p id="message-error" className="mt-2 text-sm text-rose-300">
+                        {formErrors.message}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="flex flex-col gap-4 pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="glow-button inline-flex min-h-12 items-center justify-center rounded-full border border-violet-300/35 bg-violet-400/18 px-6 py-3 text-base font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                    </button>
+
+                    {submitState.status !== "idle" ? (
+                      <p
+                        className={
+                          submitState.status === "success"
+                            ? "text-sm text-emerald-300"
+                            : "text-sm text-rose-300"
+                        }
+                        role="status"
+                      >
+                        {submitState.message}
+                      </p>
+                    ) : null}
+                  </div>
+                </form>
+
+                <div className="mt-6 space-y-4 border-t border-white/10 pt-6">
                   {contactLinks.map((item) => (
                     <a
                       key={item.label}
@@ -857,9 +1132,7 @@ export default function LandingPage() {
               <p className="font-semibold uppercase tracking-[0.24em] text-white/90">
                 {siteConfig.name}
               </p>
-              <p className="mt-2">
-                Custom AI systems and internal tools for service businesses
-              </p>
+              <p className="mt-2">Problem to Product Labs for service businesses</p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <a
@@ -882,7 +1155,10 @@ export default function LandingPage() {
               >
                 WhatsApp
               </a>
-              <Link href="/privacy" className="transition duration-300 hover:text-white">
+              <Link
+                href="/privacy"
+                className="transition duration-300 hover:text-white"
+              >
                 Privacy
               </Link>
             </div>
